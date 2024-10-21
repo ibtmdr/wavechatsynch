@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="wavechat-test-suite.xml" />
+	<flow name="MockedFlow" >
+		<choice doc:name="Choice">
+			<when expression="#[vars.counter == 1]">
+				<set-payload doc:name="Post one" value='#[output application/json&#10;---&#10;readUrl("classpath://wavechatSynch/wavechat_output.json", "application/json")]'/>
+			</when>
+			<when expression="#[vars.counter == 2]">
+				<set-payload value='#[output application/json&#10;---&#10;readUrl("classpath://wavechatSynch/wavechat_output2.json", "application/json")]' doc:name="Post two" />
+			</when>
+			<otherwise >
+				<set-payload value='#[output application/json&#10;---&#10;readUrl("classpath://wavechatSynch/wavechat_output3.json", "application/json")]' doc:name="Duplicated Post" />
+			</otherwise>
+		</choice>
+	</flow>
+	<munit:test name="one-wavechat-post-to-contenthub-test-suite-wavechatsynchFlowTest" doc:id="17662b39-90a0-4506-bc8c-94bad212311c" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="wavechat mock" doc:id="25758e0d-b79c-4fdd-952b-e1d6e14c0ba1" processor="http:request" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Get WaveChat Post" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="0d355538-11e7-4968-86c4-8935c8f41ea7" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value='#[output application/json&#10;---&#10;readUrl("classpath://wavechatSynch/wavechat_output5.json", "application/json")]' mediaType="application/json" encoding="UTF-8" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="contenthub mock" doc:id="6a5666b7-e642-43d6-836b-b8906e6c561b" processor="http:request">
+				<munit-tools:with-attributes>
+					<munit-tools:with-attribute whereValue="Post ContentHub Article" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="a9f95d31-38e3-4dc6-b25b-46fa6a9b09c8" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return>
+					<munit-tools:payload value='#[output application/json&#10;---&#10;readUrl("classpath://wavechatSynch/contenthub_output.json", "application/json")]' mediaType="application/json" encoding="UTF-8" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		    
+
+</munit:behavior>
+		<munit:execution>
+			<flow-ref doc:name="wavechatsynchFlow" name="wavechatsynchFlow" doc:id="1bfea440-03c4-426f-9a60-43a9e814aeb3" />
+		
+
+</munit:execution>
+		<munit:validation>
+			<munit-tools:verify-call doc:name="end logger" doc:id="2a970127-237d-406c-91de-09369b69a95e" processor="logger">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="996d45db-00a1-4eea-944e-2ad58d1da286" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+
+			</munit-tools:verify-call>
+
+		</munit:validation>
+	
+</munit:test>
+	<munit:test name="duplicate-wavechat-post-test-suite-wavechatsynchFlowTest" doc:id="acce89a8-e942-46bb-99fc-a3634c4461d7" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="wavechat mock" doc:id="d2ecf32f-af8e-40ec-b417-712dc16b5a88" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Get WaveChat Post" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="0d355538-11e7-4968-86c4-8935c8f41ea7" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			    <munit-tools:then-call flow="MockedFlow" />
+				
+            </munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="contenthub mock" doc:id="c4ac1e4f-8ca8-4bb8-b2e6-adbec24b6222" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Post ContentHub Article" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="a9f95d31-38e3-4dc6-b25b-46fa6a9b09c8" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value='#[output application/json&#10;---&#10;readUrl("classpath://wavechatSynch/contenthub_output.json", "application/json")]' mediaType="application/json" encoding="UTF-8" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		    
+</munit:behavior>
+		<munit:execution>
+			<foreach doc:name="For Each" collection='#[[1,2,3]]' rootMessageVariableName="wavechatcustomerid">
+			<flow-ref doc:name="wavechatsynchFlow" name="wavechatsynchFlow" doc:id="30ff0586-81f9-4fc8-8c8e-7c25ebb04c37" />
+		</foreach>
+		
+</munit:execution>
+		<munit:validation>
+			<munit-tools:verify-call doc:name="Exception logger" doc:id="774e8412-5301-4904-b5d7-c8cebcc8e29c" processor="logger">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="011e6851-83fe-450d-8c39-46a04540a126" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+
+		</munit:validation>
+	
+</munit:test>
+<munit:test name="error-contenthub-post-test-suite-wavechatsynchFlowTest" doc:id="a6f2a3c5-f3b5-4977-8271-447498951bfd" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="wavechat mock" doc:id="67304aee-3843-4116-8258-e10eb3034657" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Get WaveChat Post" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="0d355538-11e7-4968-86c4-8935c8f41ea7" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value='#[output application/json&#10;---&#10;readUrl("classpath://wavechatSynch/wavechat_output4.json", "application/json")]' mediaType="application/json" encoding="UTF-8" />
+				</munit-tools:then-return>
+				
+            
+</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="contenthub issue" doc:id="2e587e67-feee-464d-a1d5-3278a0533a7e" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Post ContentHub Article" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="a9f95d31-38e3-4dc6-b25b-46fa6a9b09c8" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APP:CONTENTHUB" />
+				</munit-tools:then-return>
+			
+</munit-tools:mock-when>
+		    
+</munit:behavior>
+		<munit:execution>
+			<flow-ref doc:name="wavechatsynchFlow" name="wavechatsynchFlow" doc:id="efd6563f-09c2-4a53-bfa8-278e8a1c3667" />
+		
+</munit:execution>
+		<munit:validation>
+			<munit-tools:verify-call doc:name="delete last key" doc:id="4c842d3e-da0b-4e0b-94f4-d3e02ab48dce" processor="os:clear">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="4a0bcce1-6039-4f01-b2c8-23a6060f146e" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+
+			</munit-tools:verify-call>
+
+		</munit:validation>
+	
+</munit:test>
+
+
+</mule>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:os="http://www.mulesoft.org/schema/mule/os" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd">
+	<flow name="wavechatsynchFlow" doc:id="ba820263-6449-466a-af0e-713281f3ce3a" >
+		<scheduler doc:name="Scheduler" doc:id="d3042978-a721-46eb-8c98-5e8799ad3a1f" >
+			<scheduling-strategy >
+				<cron timeZone="UTC" expression="${scheduler.cron}"/>
+			</scheduling-strategy>
+		</scheduler>
+		<logger level="INFO" doc:name="Start Synch" doc:id="d2746ff8-9a58-4a22-8ddc-d63e1883fc64" message="Start Synch"/>
+		<http:request method="GET" doc:name="Get WaveChat Post" doc:id="0d355538-11e7-4968-86c4-8935c8f41ea7" config-ref="HTTP_Request_configuration_wavechat" path="${wavechat.path}"/>
+		<logger level="INFO" doc:name="Last Wavechat Post" doc:id="15de4b57-0b87-4f62-af56-c25da930395a" message="#[payload]"/>
+		<ee:transform doc:name="ContentHub Body" doc:id="91bc64e4-bb50-4e63-afa8-24fe8b2eaa43" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+ "content": payload.body,
+ "customer": payload.createdBy.id,
+ "title": payload.title,
+ "postType": payload."type"
+}
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="New ContentHub Post" doc:id="b66ef4b9-8167-46a0-90b7-ca94131e8c96" message="#[payload]"/>
+		<idempotent-message-validator doc:name="Idempotent Message Validator" doc:id="e2185aca-c381-40c8-807d-33e3c839d82d" objectStore="Object_store" idExpression="#[%dw 2.0&#10;import dw::Crypto&#10;output application/octet-stream&#10;var data=payload.^raw as String&#10;---&#10;Crypto::hashWith(data,'MD5')]"/>
+		<http:request method="GET" doc:name="Post ContentHub Article" doc:id="a9f95d31-38e3-4dc6-b25b-46fa6a9b09c8" config-ref="HTTP_Request_configuration_contenthub" path="${contenthub.path}">
+			<error-mapping targetType="APP:CONTENTHUB" />
+		</http:request>
+		<logger level="INFO" doc:name="End Synch" doc:id="996d45db-00a1-4eea-944e-2ad58d1da286" message="End Synch"/>
+		<error-handler ref="errors_handlerError_Handler" />
+	</flow>
+</mule>

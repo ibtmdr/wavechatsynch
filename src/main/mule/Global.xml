@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:os="http://www.mulesoft.org/schema/mule/os"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd">
+	
+<http:request-config name="HTTP_Request_configuration_wavechat" doc:name="HTTP Request configuration" doc:id="d31f22aa-9f0f-4091-96df-cefb05befcf3" basePath="${wavechat.basepath}" responseTimeout="${wavechat.timeout}">
+		<http:request-connection protocol="${wavechat.protocol}" host="${wavechat.host}" port="${wavechat.port}" >
+			<reconnection >
+				<reconnect frequency="${wavechat.reconnection.frequency}" count="${wavechat.reconnection.maxattempts}" />
+			</reconnection>
+		</http:request-connection>
+	</http:request-config>
+	<http:request-config name="HTTP_Request_configuration_contenthub" doc:name="HTTP Request configuration" doc:id="71058ba3-33f6-4363-8fed-2aed1943ca40" basePath="${contenthub.basepath}" responseTimeout="${contenthub.timeout}"> 
+	    <http:request-connection protocol="${contenthub.protocol}" host="${contenthub.host}" port="${contenthub.port}" >
+			<reconnection >
+				<reconnect frequency="${contenthub.reconnection.frequency}" count="${contenthub.reconnection.maxattempts}" />
+			</reconnection>
+		</http:request-connection>
+	</http:request-config>
+	<os:object-store name="Object_store" doc:name="Object store" doc:id="384d91e9-8b6c-4878-8623-7a01b80b20dc" maxEntries="1" entryTtl="10" expirationInterval="60" />
+	<configuration-properties doc:name="Configuration properties" doc:id="068a126d-035c-4fa4-b9fd-908357345218" file="properties/${mule.env}_properties.yaml" />
+	<configuration doc:name="Configuration" doc:id="cc48931f-8c40-4874-8258-c4f820795e7e" defaultErrorHandler-ref="errors_handlerError_Handler" />
+	
+
+</mule>

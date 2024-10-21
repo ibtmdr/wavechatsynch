@@ -1,0 +1,25 @@
+ 
+
+scheduler:
+   cron: "0 0/5 * * * ?"
+
+wavechat:
+  protocol: "HTTPS"
+  host: "wavechat.com"
+  port: "443"
+  basepath: "/"
+  path: "post"
+  timeout: "30000"
+  reconnection:
+    frequency: "30000"
+    maxattempts: "3"
+contenthub:
+  protocol: "HTTPS"
+  host: "contenthub.fr"
+  port: "443"
+  basepath: "/"
+  path:  "article"
+  timeout: "30000"
+  reconnection:
+    frequency: "30000"
+    maxattempts: "3"

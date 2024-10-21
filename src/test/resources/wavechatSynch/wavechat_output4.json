@@ -1,0 +1,63 @@
+{
+ "pinned": false,
+ "type": "Post",
+ "group": null,
+ "parentId": null,
+ "locale": "en",
+ "body": "I'm not felling good",
+ "likedByMe": false,
+ "savedByMe": false,
+ "createdByMe": false,
+ "createdBySystem": false,
+ "cover": null,
+ "medias": [
+ {
+ "id": "b601ca9c-b655-477b-9d16-e0de8a2173e3",
+ "type": "image/png",
+ "urls": {
+ "small": "link",
+ "medium": "link",
+ "large": "link",
+ "cropped": "link",
+ "original": "link",
+ "mp4": null
+ },
+ "moderated": false
+ }
+ ],
+ "title":"good night",
+ "header": "",
+ "theme": "",
+ "color": null,
+ "galleries": {
+ "1": [],
+ "2": [],
+ "3": [],
+ "4": [],
+ "5": []
+ },
+ "files": null,
+ "coverPicture": null,
+ "createdBy": {
+ "id": "a1b2c3d4-5e6f-7g8h-9i0j-1k2l3m4n5o6h",
+ "role": null,
+ "fullName": "John Smith",
+ "email": "john.smith@example.com",
+ "jobTitle": "Software Developer",
+ "city": "New York"
+ },
+ "totalComments": 0,
+ "totalLikes": 0,
+ "responseAvatars": null,
+ "tags": [
+ "TechConf2024"
+ ],
+ "depth": null,
+ "links": [],
+ "status": 2,
+ "id": "5a79469e-7af1-4fe7-a5f3-4f7a6776a57f",
+ "entityType": null,
+ "createdAtUtc": "2024-07-17T15:40:00.3440601Z",
+ "updatedAtUtc": "2024-07-17T15:40:00.3717555Z",
+ "updatedBy": null
+}

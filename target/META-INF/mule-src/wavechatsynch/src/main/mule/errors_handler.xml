@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:os="http://www.mulesoft.org/schema/mule/os" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd">
+	<error-handler name="errors_handlerError_Handler" doc:id="6e3580c5-09fb-41d0-8b3a-8c0226ddd662" >
+	        <on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="e1f03417-dbd4-480c-b820-4f85d7c30e59" type="MULE:DUPLICATE_MESSAGE">
+				<logger level="INFO" doc:name="Logger" doc:id="011e6851-83fe-450d-8c39-46a04540a126" message="post already sent to contenthub"/>
+			</on-error-continue>
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="e1cef242-ab6b-41a2-91bc-698b701e15cb" type="APP:CONTENTHUB">
+			<os:clear doc:name="Clear saved key" doc:id="4a0bcce1-6039-4f01-b2c8-23a6060f146e" objectStore="Object_store"/>
+			
+</on-error-continue>
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="ed81f4b8-02ca-4ced-a4dd-dd7142ae76b8" type="ANY">
+				<logger level="INFO" doc:name="Logger" doc:id="068a7595-c830-4947-8c27-861205a92813" message="#[error.description]" />
+			</on-error-continue>
+    </error-handler>
+</mule>
